@@ -23,11 +23,11 @@
 # tipico comando de solicitud de datos: 
 # ./fslurp -b 19200 -r all -d , -p /dev/ttyS1 
 
-ServiceURL=http://163.117.157.189/emoncms_spectrum/input/post.json
-apikey=66999c52a47cec0a579ec0a81e98ba23
+ServiceURL=http://163.XXX.XXX.189/emoncms_spectrum/input/post.json
+apikey=XXXX
 
 # Location of fslurp
-FSlurp=./fslurp
+FSlurp=/home/u4477/fslurp/fslurp
 
 # Location of curl
 CURL=/usr/bin/curl 
@@ -45,13 +45,14 @@ FSlurpOptions="${FSlurpOptions} -d $Delimiter"	# Use delimited report
 # Get the data from fslurp
 # reportOutput=`$FSlurp $FSlurpOptions | cut -d$Delimiter -f1,5`
 
-echo "Espere, reclamando datos..."
+#echo "Espere, reclamando datos..."
 
 reportOutput=`$FSlurp $FSlurpOptions`
+echo $reportOutput >> /home/u4477/fslurp/datos/datos_fronius_ciemat.log
 
-echo $reportOutput
+#echo $reportOutput
 
-echo "Este ha sido el report de los inversores"
+#echo "Este ha sido el report de los inversores"
 
 Date=`echo $reportOutput | cut -d$Delimiter -f1`
 INV=`echo $reportOutput | cut -d$Delimiter -f2`
@@ -78,6 +79,9 @@ MINIMUM_AC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f20`
 MAXIMUM_DC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f21`
 OPERATING_HOURS_TOTAL=`echo $reportOutput | cut -d$Delimiter -f22`
 
+if [ $INV -lt 6 ] 
+	then
+
 var0="DATE_"$INV":"
 var1=",POWER_"$INV":"
 var2=",AC_CURRENT_"$INV":"
@@ -132,8 +136,10 @@ $var4$AC_FREQUENCY\
 $var5$DC_CURRENT\
 "}&apikey="$apikey > /dev/null 2>&1
 
+fi
+
 #########Inversor 4
-Date=`echo $reportOutput | cut -d$Delimiter -f23`
+#Date=`echo $reportOutput | cut -d$Delimiter -f23`
 INV=`echo $reportOutput | cut -d$Delimiter -f24`
 # Convert KilowattHour data from Inverter to WattHour data.
 # Generated=`echo ${Generated} \* 1000 | bc`
@@ -158,6 +164,8 @@ MINIMUM_AC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f42`
 MAXIMUM_DC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f43`
 OPERATING_HOURS_TOTAL=`echo $reportOutput | cut -d$Delimiter -f44`
 
+if [ $INV -lt 6 ] 
+	then
 var0="DATE_"$INV":"
 var1=",POWER_"$INV":"
 var2=",AC_CURRENT_"$INV":"
@@ -212,8 +220,10 @@ $var4$AC_FREQUENCY\
 $var5$DC_CURRENT\
 "}&apikey="$apikey > /dev/null 2>&1
 
+fi
+
 #########Inversor 3
-Date=`echo $reportOutput | cut -d$Delimiter -f45`
+#Date=`echo $reportOutput | cut -d$Delimiter -f45`
 INV=`echo $reportOutput | cut -d$Delimiter -f46`
 # Convert KilowattHour data from Inverter to WattHour data.
 # Generated=`echo ${Generated} \* 1000 | bc`
@@ -238,6 +248,9 @@ MINIMUM_AC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f64`
 MAXIMUM_DC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f65`
 OPERATING_HOURS_TOTAL=`echo $reportOutput | cut -d$Delimiter -f66`
 
+if [ $INV -lt 6 ] 
+	then
+
 var0="DATE_"$INV":"
 var1=",POWER_"$INV":"
 var2=",AC_CURRENT_"$INV":"
@@ -292,8 +305,10 @@ $var4$AC_FREQUENCY\
 $var5$DC_CURRENT\
 "}&apikey="$apikey > /dev/null 2>&1
 
+fi
+
 #########Inversor 2
-Date=`echo $reportOutput | cut -d$Delimiter -f67`
+#Date=`echo $reportOutput | cut -d$Delimiter -f67`
 INV=`echo $reportOutput | cut -d$Delimiter -f68`
 # Convert KilowattHour data from Inverter to WattHour data.
 # Generated=`echo ${Generated} \* 1000 | bc`
@@ -318,6 +333,9 @@ MINIMUM_AC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f86`
 MAXIMUM_DC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f87`
 OPERATING_HOURS_TOTAL=`echo $reportOutput | cut -d$Delimiter -f88`
 
+if [ $INV -lt 6 ] 
+	then
+
 var0="DATE_"$INV":"
 var1=",POWER_"$INV":"
 var2=",AC_CURRENT_"$INV":"
@@ -372,9 +390,11 @@ $var4$AC_FREQUENCY\
 $var5$DC_CURRENT\
 "}&apikey="$apikey > /dev/null 2>&1
 
+fi
+
 #########Inversor 1
 
-Date=`echo $reportOutput | cut -d$Delimiter -f89`
+#Date=`echo $reportOutput | cut -d$Delimiter -f89`
 INV=`echo $reportOutput | cut -d$Delimiter -f90`
 # Convert KilowattHour data from Inverter to WattHour data.
 # Generated=`echo ${Generated} \* 1000 | bc`
@@ -399,6 +419,9 @@ MINIMUM_AC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f108`
 MAXIMUM_DC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f109`
 OPERATING_HOURS_TOTAL=`echo $reportOutput | cut -d$Delimiter -f110`
 
+if [ $INV -lt 6 ] 
+	then
+
 var0="DATE_"$INV":"
 var1=",POWER_"$INV":"
 var2=",AC_CURRENT_"$INV":"
@@ -453,6 +476,8 @@ $var4$AC_FREQUENCY\
 $var5$DC_CURRENT\
 "}&apikey="$apikey > /dev/null 2>&1
 
-echo "Datos enviados a emoncms"
+fi
+
+# echo "Datos enviados a emoncms"
 
 
