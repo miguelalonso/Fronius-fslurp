@@ -23,8 +23,8 @@
 # tipico comando de solicitud de datos: 
 # ./fslurp -b 19200 -r all -d , -p /dev/ttyS1 
 
-ServiceURL=http://163.XXX.XXX.189/emoncms_spectrum/input/post.json
-apikey=XXXX
+ServiceURL=http://163.117.157.189/emoncms_spectrum/input/post.json
+apikey=66999c52a47cec0a579ec0a81e98ba23
 
 # Location of fslurp
 FSlurp=/home/u4477/fslurp/fslurp
@@ -79,8 +79,10 @@ MINIMUM_AC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f20`
 MAXIMUM_DC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f21`
 OPERATING_HOURS_TOTAL=`echo $reportOutput | cut -d$Delimiter -f22`
 
-if [ $INV -lt 6 ] 
-	then
+# Numero de inversor entre 1 y 5, potencia >-87
+
+if [ $INV -lt 6 ] && [ $POWER -gt -87 ] && [ $INV -gt 0 ] 
+then
 
 var0="DATE_"$INV":"
 var1=",POWER_"$INV":"
@@ -140,6 +142,8 @@ fi
 
 #########Inversor 4
 #Date=`echo $reportOutput | cut -d$Delimiter -f23`
+# Se comenta Date ya que sale con espacios en blanco y no se puede enviar por curl. hay que
+# quitarlos en la proxima versión
 INV=`echo $reportOutput | cut -d$Delimiter -f24`
 # Convert KilowattHour data from Inverter to WattHour data.
 # Generated=`echo ${Generated} \* 1000 | bc`
@@ -164,7 +168,7 @@ MINIMUM_AC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f42`
 MAXIMUM_DC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f43`
 OPERATING_HOURS_TOTAL=`echo $reportOutput | cut -d$Delimiter -f44`
 
-if [ $INV -lt 6 ] 
+if [ $INV -lt 6 ] && [ $POWER -gt -87 ] && [ $INV -gt 0 ]
 	then
 var0="DATE_"$INV":"
 var1=",POWER_"$INV":"
@@ -248,7 +252,7 @@ MINIMUM_AC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f64`
 MAXIMUM_DC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f65`
 OPERATING_HOURS_TOTAL=`echo $reportOutput | cut -d$Delimiter -f66`
 
-if [ $INV -lt 6 ] 
+if [ $INV -lt 6 ] && [ $POWER -gt -87 ] && [ $INV -gt 0 ]
 	then
 
 var0="DATE_"$INV":"
@@ -333,7 +337,7 @@ MINIMUM_AC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f86`
 MAXIMUM_DC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f87`
 OPERATING_HOURS_TOTAL=`echo $reportOutput | cut -d$Delimiter -f88`
 
-if [ $INV -lt 6 ] 
+if [ $INV -lt 6 ] && [ $POWER -gt -87 ] && [ $INV -gt 0 ]
 	then
 
 var0="DATE_"$INV":"
@@ -419,7 +423,7 @@ MINIMUM_AC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f108`
 MAXIMUM_DC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f109`
 OPERATING_HOURS_TOTAL=`echo $reportOutput | cut -d$Delimiter -f110`
 
-if [ $INV -lt 6 ] 
+if [ $INV -lt 6 ] && [ $POWER -gt -87 ] && [ $INV -gt 0 ]
 	then
 
 var0="DATE_"$INV":"
@@ -479,5 +483,4 @@ $var5$DC_CURRENT\
 fi
 
 # echo "Datos enviados a emoncms"
-
 
