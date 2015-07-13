@@ -12,6 +12,9 @@ sudo crontab -e
 
 la tarea fslurp2dataciemat creo ficheros de datos cada 5 minutos, con formato de fecha leible por humano
 
+#=====================================================================================
+del github original fslurp
+#=====================================================================================
 $RCSfile: README,v $
 $Revision: 1.3 $
 $Date: 2013/11/17 00:16:12 $
