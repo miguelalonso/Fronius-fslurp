@@ -1,4 +1,6 @@
 Versión de fslurp para inversores fronius de la terraza.
+llamada online
+/home/u4477/fslurp/fslurp -b 19200 -r all -d , -p /dev/ttyS1
 
 ver --> sendtoemoncms.sh
 (lee los datos, los almacena en ficheros /home/u4477/fslurp/data)
@@ -11,6 +13,37 @@ sudo crontab -e
 */5 * * * * /home/u4477/fslurp/fslurp2dataciemat.sh
 
 la tarea fslurp2dataciemat creo ficheros de datos cada 5 minutos, con formato de fecha leible por humano
+
+$ cd /wherever/you/put/it/fslurp-0.5
+$ make clobber
+$ make
+
+And then to run it, from the same directory:
+
+$ ./fslurp -h
+
+This will display the following help message:
+
+Usage: ./fslurp [-b baud][-d delimiter][-H][-h][-p device][-r report][-v]
+-b baud Set the baud rate. Supported rates are:
+2400, 4800, 9600, and 19200. Defaults to 9600.
+-d delimter Set delimiter for CSV-style output. The
+default is no delimiter, human-readable.
+-H Display the delimited output header for the
+current reporting mode. The -d option must
+also be set.
+-h Display this help message.
+-p device Set the serial port device. Defaults to /dev/ttyS0.
+-r report Set report type. Supported types are:
+now, day, total, and all Defaults to now.
+-v Enable verbose, debugging output.
+
+Return codes:
+0 Success.
+1 Communications failure.
+2 No active inverter found.
+3 Usage error.
+4 Fronius protocol error.
 
 #=====================================================================================
 del github original fslurp
