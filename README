@@ -1,3 +1,17 @@
+Versión de fslurp para inversores fronius de la terraza.
+
+ver --> sendtoemoncms.sh
+(lee los datos, los almacena en ficheros /home/u4477/fslurp/data)
+
+para arrancarlo se hace con un cron. 
+
+sudo crontab -e
+
+* * * * * /home/u4477/fslurp/fslurp2emoncms.sh
+*/5 * * * * /home/u4477/fslurp/fslurp2dataciemat.sh
+
+la tarea fslurp2dataciemat creo ficheros de datos cada 5 minutos, con formato de fecha leible por humano
+
 $RCSfile: README,v $
 $Revision: 1.3 $
 $Date: 2013/11/17 00:16:12 $
