@@ -157,13 +157,13 @@ cadena="Time,I1V,I1A,I1P,I2V,I2A,I2P,I3V,I3A,I3P,I4V,I4A,I4P,"\
 "OPERATING_HOURS_DAY,ENERGY_TOTAL,MAXIMUM_POWER_TOTAL,MAXIMUM_AC_VOLTAGE_TOTAL,"\
 "MINIMUM_AC_VOLTAGE_TOTAL,MAXIMUM_DC_VOLTAGE_TOTAL,OPERATING_HOURS_TOTAL,INV"
 
-INPUT= "/home/u4477/fslurp/datos/123solar/invt5/$FECHA".csv"
+INPUT= "/home/u4477/fslurp/datos/123solar/invt1/$FECHA".csv"
 [ ! -f $INPUT ] && { echo $cadena >> /home/u4477/fslurp/datos/123solar/invt1/$FECHA".csv"; }
-INPUT= "/home/u4477/fslurp/datos/123solar/invt5/$FECHA".csv"
+INPUT= "/home/u4477/fslurp/datos/123solar/invt2/$FECHA".csv"
 [ ! -f $INPUT ] && { echo $cadena >> /home/u4477/fslurp/datos/123solar/invt2/$FECHA".csv"; }
-INPUT= "/home/u4477/fslurp/datos/123solar/invt5/$FECHA".csv"
+INPUT= "/home/u4477/fslurp/datos/123solar/invt3/$FECHA".csv"
 [ ! -f $INPUT ] && { echo $cadena >> /home/u4477/fslurp/datos/123solar/invt3/$FECHA".csv"; }
-INPUT= "/home/u4477/fslurp/datos/123solar/invt5/$FECHA".csv"
+INPUT= "/home/u4477/fslurp/datos/123solar/invt4/$FECHA".csv"
 [ ! -f $INPUT ] && { echo $cadena >> /home/u4477/fslurp/datos/123solar/invt4/$FECHA".csv"; }
 INPUT= "/home/u4477/fslurp/datos/123solar/invt5/$FECHA".csv"
 [ ! -f $INPUT ] && { echo $cadena >> /home/u4477/fslurp/datos/123solar/invt5/$FECHA".csv"; }
