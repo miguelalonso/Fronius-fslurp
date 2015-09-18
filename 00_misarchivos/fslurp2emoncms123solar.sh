@@ -149,17 +149,40 @@ $var5$OPERATING_HOURS_TOTAL\
 "}&apikey="$apikey > /dev/null 2>&1
 
 # creación de ficheros para 123solar
+#verifica si existe el fichero, al inicio escribe cabecera
 # en /home/u4477/fslurp/datos/123solar/invt1
-#Time,I1V,I1A,I1P,I2V,I2A,I2P,I3V,I3A,I3P,I4V,I4A,I4P,
-#G1V,G1A,G1P,G2V,G2A,G2P,G3V,G3A,G3P,FRQ,EFF,INVT,BOOT,SR,KWHT
+cadena="Time,I1V,I1A,I1P,I2V,I2A,I2P,I3V,I3A,I3P,I4V,I4A,I4P,"\
+"G1V,G1A,G1P,G2V,G2A,G2P,G3V,G3A,G3P,FRQ,EFF,INVT,BOOT,SR,KWHT,"\
+"MAXIMUM_POWER_DAY,MAXIMUM_AC_VOLTAGE_DAY,MINIMUM_AC_VOLTAGE_DAY,MAXIMUM_DC_VOLTAGE_DAY,"\
+"OPERATING_HOURS_DAY,ENERGY_TOTAL,MAXIMUM_POWER_TOTAL,MAXIMUM_AC_VOLTAGE_TOTAL,"\
+"MINIMUM_AC_VOLTAGE_TOTAL,MAXIMUM_DC_VOLTAGE_TOTAL,OPERATING_HOURS_TOTAL,INV"
+
+INPUT= "/home/u4477/fslurp/datos/123solar/invt5/$FECHA".csv"
+[ ! -f $INPUT ] && { echo $cadena >> /home/u4477/fslurp/datos/123solar/invt1/$FECHA".csv"; }
+INPUT= "/home/u4477/fslurp/datos/123solar/invt5/$FECHA".csv"
+[ ! -f $INPUT ] && { echo $cadena >> /home/u4477/fslurp/datos/123solar/invt2/$FECHA".csv"; }
+INPUT= "/home/u4477/fslurp/datos/123solar/invt5/$FECHA".csv"
+[ ! -f $INPUT ] && { echo $cadena >> /home/u4477/fslurp/datos/123solar/invt3/$FECHA".csv"; }
+INPUT= "/home/u4477/fslurp/datos/123solar/invt5/$FECHA".csv"
+[ ! -f $INPUT ] && { echo $cadena >> /home/u4477/fslurp/datos/123solar/invt4/$FECHA".csv"; }
+INPUT= "/home/u4477/fslurp/datos/123solar/invt5/$FECHA".csv"
+[ ! -f $INPUT ] && { echo $cadena >> /home/u4477/fslurp/datos/123solar/invt5/$FECHA".csv"; }
+
+
 #Time,I1V,I1A,I1P,,,,,,,,,,
 #G1V,G1A,G1P,,,,,,,FRQ,,,,,KWHT
+
 
 # Generated=`echo ${Generated} \* 1000 | bc`
 
 DC_POWER=`echo ${DC_CURRENT} \* ${DC_VOLTAGE} | bc`
-cadena=$HORA","$DC_VOLTAGE","$DC_CURRENT","$DC_POWER",,,,,,,,,,"$AC_VOLTAGE","$AC_CURRENT","$POWER",,,,,,,"$AC_FREQUENCY",,,,,"$ENERGY_DAY
+cadena=$HORA","$DC_VOLTAGE","$DC_CURRENT","$DC_POWER",,,,,,,,,,"\
+$AC_VOLTAGE","$AC_CURRENT","$POWER",,,,,,,"$AC_FREQUENCY",,,,,"$ENERGY_DAY","\
+$MAXIMUM_POWER_DAY","$MAXIMUM_AC_VOLTAGE_DAY","$MINIMUM_AC_VOLTAGE_DAY","$MAXIMUM_DC_VOLTAGE_DAY","\
+$OPERATING_HOURS_DAY","$ENERGY_TOTAL","$MAXIMUM_POWER_TOTAL","$MAXIMUM_AC_VOLTAGE_TOTAL","\
+$MINIMUM_AC_VOLTAGE_TOTAL","$MAXIMUM_DC_VOLTAGE_TOTAL","$OPERATING_HOURS_TOTAL","$INV
 echo $cadena >> /home/u4477/fslurp/datos/123solar/invt5/$FECHA".csv"
+
 
 
 fi
