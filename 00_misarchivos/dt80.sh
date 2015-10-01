@@ -30,6 +30,10 @@ done
 #eval y='$'campo$i
 #echo $yecho $y
 #done
+cabecera="canal_101V,canal_102V,canal_103V,canal_104V,canal_105V,canal_106V,canal_107V,canal_108V,canal_109V,cana$
+INPUT="/home/u4477/fslurp/datos/123solar/"$FECHA"_datataker.csv"
+[ ! -f $INPUT ] && { echo $cabecera >> /home/u4477/fslurp/datos/123solar/$FECHA".csv"; }
+
 echo $lectura >> /home/u4477/fslurp/datos/123solar/$FECHA"_datataker.csv"
 echo $lectura > /home/u4477/fslurp/datos/123solar/"ultimalectura_datataker.csv"
 #echo $CADENADT80
