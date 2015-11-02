@@ -30,12 +30,56 @@ done
 #eval y='$'campo$i
 #echo $yecho $y
 #done
+#ahora  leemos los datos de las estaciones meteo de emoncms_spectrum
+url="http://163.117.157.189/emoncms_spectrum/feed/value.json?id="
+apikey="&apikey=66999c52a47cec0a579ec0a81e98ba23"
+id=1916
+
+#datos del node 42
+vaisala=""
+cabvaisala=""
+for i in `seq 1876 1886`
+do
+resultado=$(curl -s $url$i$apikey)
+resultado=$(echo  $resultado | sed "s/\"//g")
+vaisala=$vaisala","$resultado
+cabvaisala=$cabvaisala","$i
+done
+
+#datos dle node 22
+for i in `seq 1897 1903`
+do
+resultado=$(curl -s $url$i$apikey)
+resultado=$(echo  $resultado | sed "s/\"//g")
+vaisala=$vaisala","$resultado
+cabvaisala=$cabvaisala","$i
+done
+# ahora del node 23
+for i in `seq 1904 1918`
+do
+resultado=$(curl -s $url$i$apikey)
+resultado=$(echo  $resultado | sed "s/\"//g")
+vaisala=$vaisala","$resultado
+cabvaisala=$cabvaisala","$i
+done
+#echo $vaisala
+#echo  "cabecera"
+#echo $cabvaisala
+
+# FIN lectura de datos de estaciones
+
 cabecera="canal_101V,canal_102V,canal_103V,canal_104V,canal_105V,canal_106V,canal_107V,canal_108V,canal_109V,cana$
+#se añaden los datos de las estaciones
+cabecera=$cabecera$cabvaisala
+lectura=$lectura$vaisala
+
 INPUT="/home/u4477/fslurp/datos/123solar/"$FECHA"_datataker.csv"
 [ ! -f $INPUT ] && { echo $cabecera >> /home/u4477/fslurp/datos/123solar/$FECHA".csv"; }
 
 echo $lectura >> /home/u4477/fslurp/datos/123solar/$FECHA"_datataker.csv"
 echo $lectura > /home/u4477/fslurp/datos/123solar/"ultimalectura_datataker.csv"
+echo $cabecera > /home/u4477/fslurp/datos/123solar/"cabecera_datataker.csv"
+
 #echo $CADENADT80
 
 # envia datos a emoncms
