@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # fslurp, Copyright (c) 2012-2013 David Stone <ds.fslurp@asif.com>
 #
@@ -22,7 +22,7 @@
 
 # tipico comando de solicitud de datos:
 # ./fslurp -b 19200 -r all -d , -p /dev/ttyS1
-#
+# modificado por Miguel Alonso Abella 2015
 #Se hace un cron: sudo crontab -e
 #* * * * * /home/u4477/fslurp/fslurp2emoncms.sh
 #*/5 * * * * /home/u4477/fslurp/fslurp2dataciemat.sh
@@ -60,9 +60,41 @@ FSlurpOptions="${FSlurpOptions} -d $Delimiter"  # Use delimited report
 reportOutput=`$FSlurp $FSlurpOptions`
 echo $reportOutput >> /home/u4477/fslurp/datos/$FECHA"_datos_fronius_ciemat.log"
 
-#echo $reportOutput
+echo $reportOutput
 
-#echo "Este ha sido el report de los inversores"
+echo "Este ha sido el report de los inversores"
+
+# Lectura de los canales del datataker  ================================
+
+fichero="/home/u4477/fslurp/datos/123solar/ultimalectura_datataker.csv"
+
+Delimiter=","
+delimiter2=";"
+while read line; do
+    echo $line
+CADENADT80a=`echo $line | cut -d$delimiter2 -f2`
+CADENADT80=${CADENADT80a:4} #cadena sólo con los 40 canales de datos
+for i in $(seq 1 40) #para los 40 canales del dt80
+do
+eval "campo$i=`echo $CADENADT80 | cut -d$Delimiter -f$i`";
+eval y='$'campo$i
+#echo $yecho $y
+done
+done < $fichero
+
+G_este=`echo "scale=2;$campo1 * 1000 / 50.0" | bc -l`
+G_sur=`echo "scale=2;$campo5 * 1000 / 50.0" | bc -l`
+G_oeste=`echo "scale=2;$campo3 * 1000 / 50.0" | bc -l`
+Gh=`echo "scale=2;$campo2 * 1000 / 50.0" | bc -l`
+G30=`echo "scale=2;$campo4 * 1000 / 50.0" | bc -l`
+T_este=`echo "scale=2;$campo21 * 1 / 1" | bc -l`
+T_sur=`echo "scale=2;$campo21 * 1 / 1" | bc -l`
+T_oeste=`echo "scale=2;$campo21 * 1 / 1" | bc -l`
+Ta=`echo "scale=2;$campo21 * 1 / 1" | bc -l`
+
+
+# Estos canales se graban en los ficheros de los inversores
+# FIN DATATAKER======================
 
 Date=`echo $reportOutput | cut -d$Delimiter -f1`
 INV=`echo $reportOutput | cut -d$Delimiter -f2`
@@ -91,7 +123,7 @@ OPERATING_HOURS_TOTAL=`echo $reportOutput | cut -d$Delimiter -f22`
 
 # Numero de inversor entre 1 y 5, potencia >-87
 
-if [ $INV -lt 6 ] && [ $POWER -gt -87 ] && [ $INV -gt 0 ]
+if [ $INV -lt 6 ] && [ $POWER -gt -87 ] && [ $INV -gt 0 ] && [ $DC_CURRENT -lt 200 ]
 then
 
 var0="DATE_"$INV":"
@@ -155,34 +187,36 @@ cadena="Time,I1V,I1A,I1P,I2V,I2A,I2P,I3V,I3A,I3P,I4V,I4A,I4P,"\
 "G1V,G1A,G1P,G2V,G2A,G2P,G3V,G3A,G3P,FRQ,EFF,INVT,BOOT,SR,KWHT,"\
 "MAXIMUM_POWER_DAY,MAXIMUM_AC_VOLTAGE_DAY,MINIMUM_AC_VOLTAGE_DAY,MAXIMUM_DC_VOLTAGE_DAY,"\
 "OPERATING_HOURS_DAY,ENERGY_TOTAL,MAXIMUM_POWER_TOTAL,MAXIMUM_AC_VOLTAGE_TOTAL,"\
-"MINIMUM_AC_VOLTAGE_TOTAL,MAXIMUM_DC_VOLTAGE_TOTAL,OPERATING_HOURS_TOTAL,INV"
+"MINIMUM_AC_VOLTAGE_TOTAL,MAXIMUM_DC_VOLTAGE_TOTAL,OPERATING_HOURS_TOTAL,INV,G_este,G_sur,G_Oeste,"\
+"T_este,T_sur,T_Oeste,Ta"
 
-INPUT= "/home/u4477/fslurp/datos/123solar/invt5/$FECHA".csv"
+INPUT="/home/u4477/fslurp/datos/123solar/invt1/"$FECHA".csv"
 [ ! -f $INPUT ] && { echo $cadena >> /home/u4477/fslurp/datos/123solar/invt1/$FECHA".csv"; }
-INPUT= "/home/u4477/fslurp/datos/123solar/invt5/$FECHA".csv"
+INPUT="/home/u4477/fslurp/datos/123solar/invt2/"$FECHA".csv"
 [ ! -f $INPUT ] && { echo $cadena >> /home/u4477/fslurp/datos/123solar/invt2/$FECHA".csv"; }
-INPUT= "/home/u4477/fslurp/datos/123solar/invt5/$FECHA".csv"
+INPUT="/home/u4477/fslurp/datos/123solar/invt3/"$FECHA".csv"
 [ ! -f $INPUT ] && { echo $cadena >> /home/u4477/fslurp/datos/123solar/invt3/$FECHA".csv"; }
-INPUT= "/home/u4477/fslurp/datos/123solar/invt5/$FECHA".csv"
+INPUT="/home/u4477/fslurp/datos/123solar/invt4/"$FECHA".csv"
 [ ! -f $INPUT ] && { echo $cadena >> /home/u4477/fslurp/datos/123solar/invt4/$FECHA".csv"; }
-INPUT= "/home/u4477/fslurp/datos/123solar/invt5/$FECHA".csv"
+INPUT="/home/u4477/fslurp/datos/123solar/invt5/"$FECHA".csv"
 [ ! -f $INPUT ] && { echo $cadena >> /home/u4477/fslurp/datos/123solar/invt5/$FECHA".csv"; }
 
 
 #Time,I1V,I1A,I1P,,,,,,,,,,
 #G1V,G1A,G1P,,,,,,,FRQ,,,,,KWHT
 
-
 # Generated=`echo ${Generated} \* 1000 | bc`
 
-DC_POWER=`echo ${DC_CURRENT} \* ${DC_VOLTAGE} | bc`
+DC_POWER=`echo "scale=2; $DC_CURRENT * $DC_VOLTAGE" | bc -l`
+EFF=`echo "scale=3;$POWER / $DC_POWER" | bc -l`
+
 cadena=$HORA","$DC_VOLTAGE","$DC_CURRENT","$DC_POWER",,,,,,,,,,"\
-$AC_VOLTAGE","$AC_CURRENT","$POWER",,,,,,,"$AC_FREQUENCY",,,,,"$ENERGY_DAY","\
+$AC_VOLTAGE","$AC_CURRENT","$POWER",,,,,,,"$AC_FREQUENCY","$EFF","$T_este","$Ta","$G_este","$ENERGY_DAY","\
 $MAXIMUM_POWER_DAY","$MAXIMUM_AC_VOLTAGE_DAY","$MINIMUM_AC_VOLTAGE_DAY","$MAXIMUM_DC_VOLTAGE_DAY","\
 $OPERATING_HOURS_DAY","$ENERGY_TOTAL","$MAXIMUM_POWER_TOTAL","$MAXIMUM_AC_VOLTAGE_TOTAL","\
-$MINIMUM_AC_VOLTAGE_TOTAL","$MAXIMUM_DC_VOLTAGE_TOTAL","$OPERATING_HOURS_TOTAL","$INV
+$MINIMUM_AC_VOLTAGE_TOTAL","$MAXIMUM_DC_VOLTAGE_TOTAL","$OPERATING_HOURS_TOTAL","$INV","\
+$G_este","$G_sur","$G_oeste","$T_este","$T_sur","$T_oeste","$Ta","$Gh","$G30
 echo $cadena >> /home/u4477/fslurp/datos/123solar/invt5/$FECHA".csv"
-
 
 
 fi
@@ -215,7 +249,7 @@ MINIMUM_AC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f42`
 MAXIMUM_DC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f43`
 OPERATING_HOURS_TOTAL=`echo $reportOutput | cut -d$Delimiter -f44`
 
-if [ $INV -lt 6 ] && [ $POWER -gt -87 ] && [ $INV -gt 0 ]
+if [ $INV -lt 6 ] && [ $POWER -gt -87 ] && [ $INV -gt 0 ] && [ $DC_CURRENT -lt 200 ]
         then
 var0="DATE_"$INV":"
 var1=",POWER_"$INV":"
@@ -271,10 +305,16 @@ $var4$MAXIMUM_DC_VOLTAGE_TOTAL\
 $var5$OPERATING_HOURS_TOTAL\
 "}&apikey="$apikey > /dev/null 2>&1
 
-DC_POWER=`echo ${DC_CURRENT} \* ${DC_VOLTAGE} | bc`
-cadena=$HORA","$DC_VOLTAGE","$DC_CURRENT","$DC_POWER",,,,,,,,,,"$AC_VOLTAGE","$AC_CURRENT","$POWER",,,,,,,"$AC_FREQUENCY",,,,,"$ENERGY_DAY
-echo $cadena >> /home/u4477/fslurp/datos/123solar/invt4/$FECHA".csv"
+DC_POWER=`echo "scale=2; $DC_CURRENT * $DC_VOLTAGE" | bc -l`
+EFF=`echo "scale=3;$POWER / $DC_POWER" | bc -l`
 
+cadena=$HORA","$DC_VOLTAGE","$DC_CURRENT","$DC_POWER",,,,,,,,,,"\
+$AC_VOLTAGE","$AC_CURRENT","$POWER",,,,,,,"$AC_FREQUENCY","$EFF","$T_este","$Ta","$G_este","$ENERGY_DAY","\
+$MAXIMUM_POWER_DAY","$MAXIMUM_AC_VOLTAGE_DAY","$MINIMUM_AC_VOLTAGE_DAY","$MAXIMUM_DC_VOLTAGE_DAY","\
+$OPERATING_HOURS_DAY","$ENERGY_TOTAL","$MAXIMUM_POWER_TOTAL","$MAXIMUM_AC_VOLTAGE_TOTAL","\
+$MINIMUM_AC_VOLTAGE_TOTAL","$MAXIMUM_DC_VOLTAGE_TOTAL","$OPERATING_HOURS_TOTAL","$INV","\
+$G_este","$G_sur","$G_oeste","$T_este","$T_sur","$T_oeste","$Ta","$Gh","$G30
+echo $cadena >> /home/u4477/fslurp/datos/123solar/invt4/$FECHA".csv"
 
 fi
 
@@ -304,7 +344,7 @@ MINIMUM_AC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f64`
 MAXIMUM_DC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f65`
 OPERATING_HOURS_TOTAL=`echo $reportOutput | cut -d$Delimiter -f66`
 
-if [ $INV -lt 6 ] && [ $POWER -gt -87 ] && [ $INV -gt 0 ]
+if [ $INV -lt 6 ] && [ $POWER -gt -87 ] && [ $INV -gt 0 ] && [ $DC_CURRENT -lt 200 ]
         then
 
 var0="DATE_"$INV":"
@@ -361,8 +401,15 @@ $var4$MAXIMUM_DC_VOLTAGE_TOTAL\
 $var5$OPERATING_HOURS_TOTAL\
 "}&apikey="$apikey > /dev/null 2>&1
 
-DC_POWER=`echo ${DC_CURRENT} \* ${DC_VOLTAGE} | bc`
-cadena=$HORA","$DC_VOLTAGE","$DC_CURRENT","$DC_POWER",,,,,,,,,,"$AC_VOLTAGE","$AC_CURRENT","$POWER",,,,,,,"$AC_FREQUENCY",,,,,"$ENERGY_DAY
+DC_POWER=`echo "scale=2; $DC_CURRENT * $DC_VOLTAGE" | bc -l`
+EFF=`echo "scale=3;$POWER / $DC_POWER" | bc -l`
+
+cadena=$HORA","$DC_VOLTAGE","$DC_CURRENT","$DC_POWER",,,,,,,,,,"\
+$AC_VOLTAGE","$AC_CURRENT","$POWER",,,,,,,"$AC_FREQUENCY","$EFF","$T_este","$Ta","$G_este","$ENERGY_DAY","\
+$MAXIMUM_POWER_DAY","$MAXIMUM_AC_VOLTAGE_DAY","$MINIMUM_AC_VOLTAGE_DAY","$MAXIMUM_DC_VOLTAGE_DAY","\
+$OPERATING_HOURS_DAY","$ENERGY_TOTAL","$MAXIMUM_POWER_TOTAL","$MAXIMUM_AC_VOLTAGE_TOTAL","\
+$MINIMUM_AC_VOLTAGE_TOTAL","$MAXIMUM_DC_VOLTAGE_TOTAL","$OPERATING_HOURS_TOTAL","$INV","\
+$G_este","$G_sur","$G_oeste","$T_este","$T_sur","$T_oeste","$Ta","$Gh","$G30
 echo $cadena >> /home/u4477/fslurp/datos/123solar/invt3/$FECHA".csv"
 
 fi
@@ -393,7 +440,7 @@ MINIMUM_AC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f86`
 MAXIMUM_DC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f87`
 OPERATING_HOURS_TOTAL=`echo $reportOutput | cut -d$Delimiter -f88`
 
-if [ $INV -lt 6 ] && [ $POWER -gt -87 ] && [ $INV -gt 0 ]
+if [ $INV -lt 6 ] && [ $POWER -gt -87 ] && [ $INV -gt 0 ] && [ $DC_CURRENT -lt 200 ]
         then
 
 var0="DATE_"$INV":"
@@ -450,10 +497,16 @@ $var4$MAXIMUM_DC_VOLTAGE_TOTAL\
 $var5$OPERATING_HOURS_TOTAL\
 "}&apikey="$apikey > /dev/null 2>&1
 
-DC_POWER=`echo ${DC_CURRENT} \* ${DC_VOLTAGE} | bc`
-cadena=$HORA","$DC_VOLTAGE","$DC_CURRENT","$DC_POWER",,,,,,,,,,"$AC_VOLTAGE","$AC_CURRENT","$POWER",,,,,,,"$AC_FREQUENCY",,,,,"$ENERGY_DAY
-echo $cadena >> /home/u4477/fslurp/datos/123solar/invt2/$FECHA".csv"
+DC_POWER=`echo "scale=2; $DC_CURRENT * $DC_VOLTAGE" | bc -l`
+EFF=`echo "scale=3;$POWER / $DC_POWER" | bc -l`
 
+cadena=$HORA","$DC_VOLTAGE","$DC_CURRENT","$DC_POWER",,,,,,,,,,"\
+$AC_VOLTAGE","$AC_CURRENT","$POWER",,,,,,,"$AC_FREQUENCY","$EFF","$T_oeste","$Ta","$G_oeste","$ENERGY_DAY","\
+$MAXIMUM_POWER_DAY","$MAXIMUM_AC_VOLTAGE_DAY","$MINIMUM_AC_VOLTAGE_DAY","$MAXIMUM_DC_VOLTAGE_DAY","\
+$OPERATING_HOURS_DAY","$ENERGY_TOTAL","$MAXIMUM_POWER_TOTAL","$MAXIMUM_AC_VOLTAGE_TOTAL","\
+$MINIMUM_AC_VOLTAGE_TOTAL","$MAXIMUM_DC_VOLTAGE_TOTAL","$OPERATING_HOURS_TOTAL","$INV","\
+$G_este","$G_sur","$G_oeste","$T_este","$T_sur","$T_oeste","$Ta","$Gh","$G30
+echo $cadena >> /home/u4477/fslurp/datos/123solar/invt2/$FECHA".csv"
 
 fi
 
@@ -484,7 +537,7 @@ MINIMUM_AC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f108`
 MAXIMUM_DC_VOLTAGE_TOTAL=`echo $reportOutput | cut -d$Delimiter -f109`
 OPERATING_HOURS_TOTAL=`echo $reportOutput | cut -d$Delimiter -f110`
 
-if [ $INV -lt 6 ] && [ $POWER -gt -87 ] && [ $INV -gt 0 ]
+if [ $INV -lt 6 ] && [ $POWER -gt -87 ] && [ $INV -gt 0 ] && [ $DC_CURRENT -lt 200 ]
         then
 
 var0="DATE_"$INV":"
@@ -541,8 +594,15 @@ $var4$MAXIMUM_DC_VOLTAGE_TOTAL\
 $var5$OPERATING_HOURS_TOTAL\
 "}&apikey="$apikey > /dev/null 2>&1
 
-DC_POWER=`echo ${DC_CURRENT} \* ${DC_VOLTAGE} | bc`
-cadena=$HORA","$DC_VOLTAGE","$DC_CURRENT","$DC_POWER",,,,,,,,,,"$AC_VOLTAGE","$AC_CURRENT","$POWER",,,,,,,"$AC_FREQUENCY",,,,,"$ENERGY_DAY
+DC_POWER=`echo "scale=2; $DC_CURRENT * $DC_VOLTAGE" | bc -l`
+EFF=`echo "scale=3;$POWER / $DC_POWER" | bc -l`
+
+cadena=$HORA","$DC_VOLTAGE","$DC_CURRENT","$DC_POWER",,,,,,,,,,"\
+$AC_VOLTAGE","$AC_CURRENT","$POWER",,,,,,,"$AC_FREQUENCY","$EFF","$T_sur","$Ta","$G_sur","$ENERGY_DAY","\
+$MAXIMUM_POWER_DAY","$MAXIMUM_AC_VOLTAGE_DAY","$MINIMUM_AC_VOLTAGE_DAY","$MAXIMUM_DC_VOLTAGE_DAY","\
+$OPERATING_HOURS_DAY","$ENERGY_TOTAL","$MAXIMUM_POWER_TOTAL","$MAXIMUM_AC_VOLTAGE_TOTAL","\
+$MINIMUM_AC_VOLTAGE_TOTAL","$MAXIMUM_DC_VOLTAGE_TOTAL","$OPERATING_HOURS_TOTAL","$INV","\
+$G_este","$G_sur","$G_oeste","$T_este","$T_sur","$T_oeste","$Ta","$Gh","$G30
 echo $cadena >> /home/u4477/fslurp/datos/123solar/invt1/$FECHA".csv"
 
 fi
