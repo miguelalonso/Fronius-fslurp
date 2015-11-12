@@ -4,6 +4,12 @@ FECHA=$(date +"%Y%m%d")
 HORA=$(date +"%H:%M:%S")
 #echo $HORA
 
+# Location of curl
+CURL=/usr/bin/curl
+
+ServiceURL=http://163.117.157.189/emoncms_spectrum/input/post.json
+apikey=66999c52a47cec0a579ec0a81e98ba23
+
 C=1
 j=1
 while [ $C -le 2 ]
@@ -11,7 +17,9 @@ do
 j=$(( j+1 ))
 #echo $j
 lectura=`python /home/u4477/fslurp/dt80serialread.py`
-#echo $reportOutput
+#eliminamos los overflow 99999.9 por espacios en blanco
+lectura=`echo "$lectura" | sed 's/99999.9//g'`
+
 Delimiter=,
 INICIO=`echo $lectura | cut -d$Delimiter -f1`
 #echo $lectura
@@ -21,15 +29,18 @@ then
 fi
 done
 #echo $lectura
-#delimiter2=";"
-#CADENADT80a=`echo $lectura | cut -d$delimiter2 -f2`
-#CADENADT80=${CADENADT80a:4} #cadena sólo con los 40 canales de datos
-#for i in $(seq 1 40) #para los 40 canales del dt80
-#do
-#eval "campo$i=`echo $CADENADT80 | cut -d$Delimiter -f$i`";
-#eval y='$'campo$i
+delimiter2=";"
+CADENADT80a=`echo $lectura | cut -d$delimiter2 -f2`
+CADENADT80b=${CADENADT80a:4} #cadena sólo con los 40 canales de datos
+
+for i in $(seq 1 40) #para los 40 canales del dt80
+do
+eval "campo$i=`echo $CADENADT80 | cut -d$Delimiter -f$i`";
+eval y='$'campo$i
+#nombre_canal$i=",DT80_canal"$i":"
 #echo $yecho $y
-#done
+done
+
 #ahora  leemos los datos de las estaciones meteo de emoncms_spectrum
 url="http://163.117.157.189/emoncms_spectrum/feed/value.json?id="
 apikey="&apikey=66999c52a47cec0a579ec0a81e98ba23"
@@ -54,6 +65,7 @@ resultado=$(echo  $resultado | sed "s/\"//g")
 vaisala=$vaisala","$resultado
 cabvaisala=$cabvaisala","$i
 done
+
 # ahora del node 23
 for i in `seq 1904 1918`
 do
@@ -68,20 +80,20 @@ done
 
 # FIN lectura de datos de estaciones
 
-cabecera="canal_101V,canal_102V,canal_103V,canal_104V,canal_105V,canal_106V,canal_107V,canal_108V,canal_109V,cana$
+cabecera="D,Nserie,Job,date,hour,msecond,OB,Cero,canal_101V,canal_102V,canal_103V,canal_104V,canal_105V,canal_106V,canal_107V,canal_108V,canal_109V,canal_110V,canal_111V,canal_112V,canal_113V,canal_114V,canal_115V,canal_116V,canal_117V,canal_118V,canal_119V,canal_120V,Canal_201C,canal_202C,canal_203C,canal_204C,canal_205C,canal_206C,canal_207C,canal_208C,canal_209C,canal_210C,canal_211C,canal_212C,canal_213C,canal_214C,canal_215C,canal_216C,canal_217C,canal_218C,canal_219C,canal_220C"
 #se añaden los datos de las estaciones
+lectura=$(echo  $lectura | sed "s/\r//g")
+
 cabecera=$cabecera$cabvaisala
 lectura=$lectura$vaisala
 
 INPUT="/home/u4477/fslurp/datos/123solar/"$FECHA"_datataker.csv"
-[ ! -f $INPUT ] && { echo $cabecera >> /home/u4477/fslurp/datos/123solar/$FECHA".csv"; }
+[ ! -f $INPUT ] && { echo $cabecera >> /home/u4477/fslurp/datos/123solar/$FECHA"_datataker.csv"; }
 
 echo $lectura >> /home/u4477/fslurp/datos/123solar/$FECHA"_datataker.csv"
 echo $lectura > /home/u4477/fslurp/datos/123solar/"ultimalectura_datataker.csv"
 echo $cabecera > /home/u4477/fslurp/datos/123solar/"cabecera_datataker.csv"
-
 #echo $CADENADT80
-
 # envia datos a emoncms
 
 a="?json={"\
@@ -133,5 +145,6 @@ dt80_canal21:$campo21\
 "}&apikey="$apikey
 
 $CURL $ServiceURL$a > /dev/null 2>&1
+
 
 #echo "FIN"
