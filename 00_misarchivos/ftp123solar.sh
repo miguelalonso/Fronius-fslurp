@@ -25,6 +25,13 @@ wput -u /home/u4477/fslurp/datos/123solar/invt4/$FECHA".csv" ftp://fronius:froni
 
 wput -u /home/u4477/fslurp/datos/123solar/invt3/$FECHA".csv" ftp://fronius:fronius@163.117.157.189/invt3/csv/$FECHA".csv" > /dev/null 2>&1
 
+wput -u /home/u4477/fslurp/datos/123solar/$FECHA"_datataker.csv" ftp://fronius:fronius@163.117.157.189/datataker/$FECHA"_datataker.csv" > /dev/null 2>&1
+
+wput -u /home/u4477/fslurp/datos/123solar/"ultimalectura_datataker.csv" ftp://fronius:fronius@163.117.157.189/datataker/"ultimalectura_datataker.csv" > /dev/null 2>&1
+
+wput -u /home/u4477/fslurp/datos/123solar/"cabecera_datataker.csv" ftp://fronius:fronius@163.117.157.189/datataker/"cabecera_datataker.csv" > /dev/null 2>&1
+
+
 wput -u /home/u4477/fslurp/datos/123solar/invt2/$FECHA".csv" ftp://fronius:fronius@163.117.157.189/invt2/csv/$FECHA".csv" > /dev/null 2>&1
 
 wput -u /home/u4477/fslurp/datos/123solar/invt1/$FECHA".csv" ftp://fronius:fronius@163.117.157.189/invt1/csv/$FECHA".csv" > /dev/null 2>&1
