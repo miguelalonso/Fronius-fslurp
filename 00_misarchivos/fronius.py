@@ -203,8 +203,9 @@ def fronius():
       G_este= str(round(float(dt80[11])*1000 / 54.87,2))
       G_sur=str(round(float(dt80[12])*1000 / 54.20,2))
       G_oeste=str(round(float(dt80[13])*1000 / 53.91,2))
-      Gh=str(round(float(dt80[15])*1000 / 53.91,2))
-      G30= str(round(float(dt80[14])*1000 / 54.72,2))
+      G30= str(round(float(dt80[14])*1000 / 53.91,2))
+      Gh=str(round(float(dt80[15])*1000 / 54.72,2))
+      
       T_este= str(float(dt80[46]))
       T_sur= str(float(dt80[46]))
       T_oeste= str(float(dt80[46]))
