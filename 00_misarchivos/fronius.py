@@ -110,56 +110,98 @@ def escribe_cabecera():
 
 
 def sendtoemoncmscsv(csv):
-      httpServ.connect()
-      time.sleep(10)
-      # Send to emoncms
-      httpServ.request("GET", "/"+emoncmspath+"/input/post.json?apikey="+apikey+"&node="+str(nodeid)+"&csv="+csv)
-      print("GET", "/"+emoncmspath+"/input/post.json?apikey="+apikey+"&node="+str(nodeid)+"&csv="+csv)
-      response = httpServ.getresponse()
-      print response.read()
-      ##    time.sleep(10)
-      #http://localhost/emoncms/input/post.json?node=1&json={power:200}
-      httpServ.close()
+      try:
+        httpServ.connect()
+        time.sleep(10)
+        # Send to emoncms
+        httpServ.request("GET", "/"+emoncmspath+"/input/post.jso$
+        print("GET", "/"+emoncmspath+"/input/post.json?apikey="+$
+        response = httpServ.getresponse()
+        print response.read()
+        ##    time.sleep(10)
+        #http://localhost/emoncms/input/post.json?node=1&json={p$
+        httpServ.close()
+      except Exception,e:
+        print("Error sendtomencms csv")
+        pass
+
 
 def sendtoemoncms(nodeid,name,data):
-      nodeid=str(nodeid)
-      data=str(data)
-      name=str(name)
-      httpServ.connect()
-      time.sleep(0.001)
-      # Send to emoncms
-      httpServ.request("GET", "/"+emoncmspath+"/input/post.json?apikey="+apikey+"&node="+nodeid+"&json={"+name+":"+data+"}")
-      #print("GET", "GET", "/"+emoncmspath+"/input/post.json?apikey="+apikey+"&node="+nodeid+"&json={"+name+":"+data+"}")
-      response = httpServ.getresponse()
-      #print response.read()
-##    time.sleep(10)
-      httpServ.close()
+      try:
+        nodeid=str(nodeid)
+        data=str(data)
+        name=str(name)
+        httpServ.connect()
+        time.sleep(0.001)
+        # Send to emoncms
+        httpServ.request("GET", "/"+emoncmspath+"/input/post.jso$
+        #print("GET", "GET", "/"+emoncmspath+"/input/post.json?a$
+        response = httpServ.getresponse()
+        #print response.read()
+        ##    time.sleep(10)
+        httpServ.close()
+      except Exception,e:
+        print("Error send to emoncms")
+        pass
 
 def readfromemoncms(nodeid,feedid):
-      nodeid=str(nodeid)
-      feedid=str(feedid)
-      data_url = "http://"+emoncmspath_read+"/feed/value.json?apikey=" + apikey_read +"&node="+nodeid+"&id=" + feedid
-      sock = urllib.urlopen(data_url)
-      data_str = sock.read()
-      data = json.loads(data_str)
-      sock.close
+      try:
+        data=[]
+        nodeid=str(nodeid)
+        feedid=str(feedid)
+        try:
+                data_url = "http://"+emoncmspath_read+"/feed/val$
+                sock = urllib2.urlopen(data_url)
+        except  URLError,HTTPError:
+                print ("error url")
+                pass
+        else:
+                data_str = sock.read()
+                data = json.loads(data_str)
+                sock.close
+
+      except Exception,e:
+        print("Error read from emoncms")
+        pass
       return data
 
+
+def is_website_online(host):
+    """ This function checks to see if a host name has a DNS ent$
+        for socket info. If the website gets something in return$
+        we know it's available to DNS.
+    """
+    try:
+        socket.gethostbyname(host)
+    except socket.gaierror:
+        return False
+    else:
+        return True
+
+
 def leer_vaisala_davis():
-      data=[]
-      for i in range (1876,1886):
+      try:
+        data=[]
+        for i in range (1876,1887):
             nodeid='42'
             data.append(readfromemoncms(nodeid,i))
             #datos del node 42
-      for i in range (1897,1903):
+        for i in range (1897,1904):
             nodeid='22'
             data.append(readfromemoncms(nodeid,i))
             #datos del node 22
-      for i in range (1904,1918):
+        for i in range (1904,1919):
             nodeid='23'
             data.append(readfromemoncms(nodeid,i))
             #datos del node 23
+      except Exception,e:
+        print ("error 234")
+        pass
+      print 'dat emoncms :'
+      print data
       return data
+
+
 
 
 def run_command(command):
@@ -196,7 +238,17 @@ def fronius():
       dt80=lee_dt80()
       if len(dt80) < 10:
         return None
-      data=leer_vaisala_davis()
+       data=[]
+      try:
+        data_url = "http://"+emoncmspath_read
+        if is_website_online(data_url):
+                data=leer_vaisala_davis()
+                print data
+      except Exception,e:
+        print ("error emoncms234")
+        pass
+
+
       dt80=dt80+data
       save_dt80(dt80)
 
