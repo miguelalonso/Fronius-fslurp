@@ -1,3 +1,6 @@
 el día 3 de junio de 2016
 se ha modificado el orginal de fslurp
 con objeto de medir las tres tensiones y corrientes del inversor trifásico
+
+para compilar:
+sudo make
