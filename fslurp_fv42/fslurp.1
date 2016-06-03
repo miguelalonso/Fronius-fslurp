@@ -1,0 +1,186 @@
+.\" Manpage for fslurp.
+.\"
+.\" fslurp, Copyright (c) 2012 David Stone <ds.fslurp@asif.com>
+.\"
+.\" $RCSfile: fslurp.1,v $
+.\" $Revision: 1.3 $
+.\" $Date: 2012/10/20 01:37:07 $
+.\"
+.\" Permission to use, copy, modify, distribute, and sell this software and its
+.\" documentation for any purpose is hereby granted without fee, provided that
+.\" the above copyright notice appear in all copies and that both the
+.\" copyright notice and this permission notice appear in supporting
+.\" documentation.  No representations are made about the suitability of this
+.\" software for any purpose.  It is provided "as is" without express or
+.\" implied warranty.
+.\"
+.TH FSLURP "1" "October 2012" "fslurp" "Manual page for fslurp"
+.SH NAME
+fslurp - Read and display data from Fronius inverters using
+Fronius's open data protocol.
+
+.SH SYNOPSIS
+.TP
+.B fslurp
+.RB [ -b
+.IR baud ]
+.RB [ -D 
+.IR device_type ]
+.RB [ -d 
+.IR delimiter ] 
+.RB [ -H ]
+.RB [ -h ]
+.RB [ -n 
+.IR device_number ] 
+.RB [ -p 
+.IR serial_port_device ] 
+.RB [ -r 
+.IR report ]
+.RB [ -t 
+.IR format ] 
+.RB [ -v ]
+.SH DESCRIPTION
+.I fslurp
+is a program for reading and displaying data from Fronius inverter systems.
+
+It uses a serial port to talk with Fronius interface devices using
+Fronius's open data protocol.
+
+It supports both individual and multiple inverter systems through the
+Interface Card Easy and the Fronius Interface Card/Box, and also Fronius
+Sensor Card/Box components.
+
+.SH OPTIONS
+.TP
+.BI -b " baud"
+Set the baud rate.  Supported rates are: 2400, 4800, 9600, and 19200.
+Defaults to 9600.
+.TP
+.BI -D " device_type"
+Set the device type. Supported values are: inverter and sensor.
+Defaults to inverter. Please note that this option may not be used
+with the system report type (-r system)
+
+.TP
+.BI -d " delimiter"
+Set delimiter for CSV-style output.
+The default is no delimiter, human-readable.
+.TP
+.B -H
+Include the delimited output header for the current reporting mode.
+The -d option must also be set.
+.TP
+.B -h
+Display this help message.
+.TP
+.BI -n " device_number"
+Run the report for an individual inverter or sensor card/box.
+The default is to report data from all devices of the current type (-D option).
+The list of available devices in the system may be obtained by running
+.B 'fslurp -r system'.
+
+.TP
+.BI -p " serial_device"
+Set the serial port device. Defaults to /dev/ttyS0.
+.TP
+.BI -r " report"
+Set report type. Supported types are: system, now, day, year, total and all.
+Defaults to system.
+
+.RS
+.IP system
+Show information about the interface, all inverters, and all sensor cards found
+in the system.
+
+
+.IP now
+Show the current readings for one or all devices (see -n option) of the current
+type (see -D option).
+
+
+.IP day
+Show today's cumulative readings for one or all devices (see -n option) of the current
+type (see -D option).
+
+
+.IP year
+Show this year's cumulative readings for one or all devices (see -n option) of the current
+type (see -D option). Please note that year data are not available
+for all interface types and a datalogger is also required.
+
+.IP total
+Show life time total readings for one or all devices (see -n option) of the current
+type (see -D option).
+
+.IP all
+Show all readings for one or all devices (see -n option) of the current
+type (see -D option).
+
+.RE
+.TP
+.BI -t " format"
+Set the format for the timestamp field, using the Linux strftime(3) format
+string. The default is "%c", which looks like:
+.RS
+.IP
+.B Wed May 26 10:43:25 2010
+.RE
+.TP
+.B -v
+Enable verbose, debugging output.
+
+.SS  Return codes
+.TP
+.B 0
+Success.
+.TP
+.B 1
+Communications failure.
+.TP
+.B 2
+Inverter not found.
+.TP
+.B 3
+Sensor Card/Box not found.
+.TP
+.B 4
+Usage error.
+.TP
+.B 5
+Fronius protocol error.
+.TP
+.B 6
+Unsupported report.
+
+.SH EXAMPLES
+.TP
+.BR "fslurp -p" \ /dev/ttyACM0 \ -b \ 4800
+Show information about the system in human-readable form using ttyACM0 serial
+port device at 4800 baud.
+
+.TP
+.BR "fslurp -d", \ -n \ 1 \ -r \ day
+Show today's cumulative readings from inverter assigned with ID 1 in CSV-style using a comma
+as delimiter.
+
+.TP
+.BR "fslurp -D" \ sensor \ -r \ now
+Show the current readings from all sensors in the system, in human-readable form.
+
+.TP
+.BR "fslurp -d", " -H -r" \ all \ -t \ '%Y%m%d\ %k:%M'
+Show all readings from all inverters in the system in CSV-style using a comma
+as delimiter, including the output header and using a custom timestamp format.
+
+.SH BUGS
+No known bugs.
+.SH AUTHORS
+
+.SS
+fslurp
+David Stone (ds.fslurp@asif.com)
+.SS
+This manual page
+Sergio Zanchetta (primes2h@ubuntu.com)
+.br
+David Stone (ds.fslurp@asif.com)

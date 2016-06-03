@@ -1,0 +1,9 @@
+Lock file support.
+Normalize names of all methods that print output.
+Work out signed getMeasuredValue (sensor card data)
+Add units to the delimited now report headers
+Consider pvoutput report.
+
+Can there be hetergenous networks of inverters that
+support different subsets of the commands?
+

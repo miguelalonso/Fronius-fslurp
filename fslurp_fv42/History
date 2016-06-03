@@ -1,0 +1,47 @@
+$RCSfile: History,v $
+$Revision: 1.9 $
+$Date: 2013/12/21 14:57:37 $
+
+Version 2.1.3	131116	Added support/testing for RS-422 connected inverters.
+			Fixed problem in fslurp2pvoutput script for
+			fractional KWH.
+
+Version 2.1.3	131116	Added 0x97 Sunpower SPR-3501F-2 to device table.
+
+Version 2.1.2	121027	Makefile updates.
+			Added README file.
+
+Version 2.1.1	121019	Fixed problem with sensor card reporting when
+			no sensor cards are present.
+			Updated -H handling to also display the header
+			when no devices are present.
+			Testing updates.
+			Man page updates.
+			Makefile updates.
+
+Version 2.1.0	121015	Added support for year data and report handling.
+			Added year support to inverter/sensor simulation.
+
+Version	2.0.9	121013	Implemented testing, updated make test target.
+			Added sensor card data and report handling.
+			Added sensor card command simulation.
+			Format handling changes for widths of different report
+			types in non-delimited output.
+
+Version 2.0.8	121012	Reorganized to update formatting for the all report.
+			Added initial version of the man page
+			(thanks to Sergio Zanchetta <primes2h@gmail.com>).
+
+Version 2.0.7	121007	Added support for -n deviceNumber.
+			Simplified system reporting implementation by
+			using DeviceIterator.
+			Added InverterSingleTargetIterator and
+			SensorCardSingleTargetIterator.
+			Move exit code defines into an Args::ExitCodes enum.
+
+Version 2.0.6	121006	Added support for -D deviceType option.
+			Implemented delimited report headers for system and
+			inverter reports.
+			Abtracted Inverter and SensorCard report handling.
+			Added DeviceIterator.
+			Added a second inverter in the SolarNet simulator.
