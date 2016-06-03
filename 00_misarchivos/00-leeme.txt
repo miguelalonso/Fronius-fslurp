@@ -1,0 +1,6 @@
+2016-junio-3
+se modifica fronius.py 
+para medir las tensiones y corrientes AC del inversor trifásico
+En los ficheros se graban en I4V,I4A, G2V,G2A,G3V,G3A
+en G1V y G1A se graban la V y la I de monitorización general, es la tensión de linea 400V y la corriente de la fase que está genrando
+Recordar que el inversor está configurado en Modo MIX (no balanceado).
